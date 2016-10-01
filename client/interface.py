@@ -12,6 +12,7 @@ from glob import *
 
 class Main_window():
   def __init__(self):
+    # Creating and configuring the window
     self.win = tk.Tk()
     self.win.grid_rowconfigure(0, weight=1)
     self.win.grid_columnconfigure(0, weight=1)
@@ -30,6 +31,7 @@ class Main_window():
     self.in_text.bind('<Return>',self.send)
     self.send_button = tk.Button(command = self.send,text="Send")
     self.send_button.grid(row=1,column=1,columnspan=2, sticky=tk.SE)
+    # Setting the properties for the tags (to add color)
     for color in COLORS:
       self.out_text.tag_config(color,foreground=color)
 
@@ -37,7 +39,7 @@ class Main_window():
     self.win.mainloop()
 
   def send(self, event = ''):
-    s=self.in_text.get().encode('utf-8')
+    s = self.in_text.get().encode('utf-8')
     self.in_text.delete(0,tk.END)
 
   def write(self, msg, header=None, color=BLACK):
