@@ -8,3 +8,10 @@ Program by Victor Couty (victor@couty.eu)
 VERSION_MAJOR = 0
 VERSION_MINOR = 1
 VERSION = str(VERSION_MAJOR)+"."+str(VERSION_MINOR)
+
+GREEN = "green"
+ORANGE = "orange"
+RED = "red"
+BLACK = "black"
+
+COLORS = [GREEN,ORANGE,RED]
