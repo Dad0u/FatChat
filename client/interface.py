@@ -9,6 +9,7 @@ Program by Victor Couty (victor@couty.eu)
 import tkinter as tk
 
 from glob import *
+from network_handler import Network_handler
 
 class Main_window():
   def __init__(self):
@@ -34,18 +35,30 @@ class Main_window():
     # Setting the properties for the tags (to add color)
     for color in COLORS:
       self.out_text.tag_config(color,foreground=color)
+    self.nh = Network_handler(self.write)
 
   def run(self):
     self.win.mainloop()
 
   def send(self, event = ''):
-    s = self.in_text.get().encode('utf-8')
+    s = self.in_text.get()#.encode('utf-8')
     self.in_text.delete(0,tk.END)
+    self.write(s)
+    if s[0] == "/":
+      command = s.split(" ")[0][1:]
+      args = s.split(" ")[1:]
+      if command == u"connect":
+        if len(args) == 0:
+          self.write("You should specifiy the address!")
+        elif len(args) == 1:
+          self.nh.connect(args[0],DEFAULT_PORT)
+        elif len(args) == 2:
+          self.nh.connect(args[0],int(args[1]))
 
-  def write(self, msg, header=None, color=BLACK):
+  def write(self, msg, header=None, header_color=BLACK):
     self.out_text.configure(state='normal')
     if header is not None:
-      self.out_text.insert(tk.END,header+": ",color)
+      self.out_text.insert(tk.END,header+": ",header_color)
     self.out_text.insert(tk.END,msg+"\n")
     self.out_text.configure(state='disabled')
     self.out_text.see(tk.END)
