@@ -8,3 +8,6 @@ Program by Victor Couty (victor@couty.eu)
 VERSION_MAJOR = 0
 VERSION_MINOR = 1
 VERSION = str(VERSION_MAJOR)+"."+str(VERSION_MINOR)
+
+DEFAULT_PORT = 1148
+SIZE = 1024
