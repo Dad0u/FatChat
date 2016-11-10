@@ -5,7 +5,6 @@ Program by Victor Couty (victor@couty.eu)
 2016
 """
 
-from glob import *
 import sys
 
 if sys.version_info.major != 3:
@@ -15,30 +14,41 @@ if sys.version_info.major != 3:
 import socket
 import select
 
-from client import Client
+from glob import *
+from client import Client_thread
 
 print("Starting FatChat server version {}...".format(VERSION))
 
 conn = socket.socket()
 conn.bind(('',DEFAULT_PORT))
 conn.listen(3)
-client = []
+client_list = []
 
-def auth(c):
-  msg = c.conn.recv(SIZE)
-  if msg == b'YOLO':
-    c.conn.send(b'POUET')
-  else:
-    print("Incorrect auth:",msg)
-    c.conn.send(b'NOPE')
-    client.remove(c)
 
 while True:
+  #Listening and acepting new clients
   new_conn = select.select([conn],[],[],0.05)[0]
   for c in new_conn:
-    client.append(Client(*c.accept()))
-    print("New client connected from "+client[-1].ip+", authentication...")
-    auth(client[-1])
+    new_client = Client_thread(*c.accept())
+    new_client.start()
+    client_list.append(new_client)
 
-  
+  #Executing actions from clients
+  for client in client_list:
+    while not client.c2s.empty():
+      action,args = client.c2s.get()
+      if action == SAY_ALL:
+        for cl in client_list:
+          cl.s2c.put((SAY_ALL,[client.nick,args[0]]))
+
+  #Removing ended client threads
+  i = 0
+  while i < len(client_list):
+    if client_list[i].finished:
+      del client_list[i]
+    i+=1
+
+for cl in client_list:
+  cl.disconnect()
+  cl.join()
 print("FatChat server terminating, bye!")

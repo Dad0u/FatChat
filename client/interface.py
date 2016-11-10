@@ -43,17 +43,29 @@ class Main_window():
   def send(self, event = ''):
     s = self.in_text.get()#.encode('utf-8')
     self.in_text.delete(0,tk.END)
-    self.write(s)
+    if len(s) == 0:
+      return
+    if not self.nh.connected:
+      self.write(s)
     if s[0] == "/":
       command = s.split(" ")[0][1:]
       args = s.split(" ")[1:]
-      if command == u"connect":
-        if len(args) == 0:
-          self.write("You should specifiy the address!")
-        elif len(args) == 1:
-          self.nh.connect(args[0],DEFAULT_PORT)
-        elif len(args) == 2:
-          self.nh.connect(args[0],int(args[1]))
+      if command in [u"connect",u"c"]:
+        self.connect(args)
+      elif command == u'disconnect':
+        self.nh.disconnect()
+      else:
+        self.write("Unknown command!")
+    else:
+      self.nh.send(s.encode())
+
+  def connect(self,args):
+    if len(args) not in [1,2]:
+      self.write("Usage: /connect address [port]")
+    elif len(args) == 1:
+      self.nh.connect(args[0],DEFAULT_PORT)
+    elif len(args) == 2:
+      self.nh.connect(args[0],int(args[1]))
 
   def write(self, msg, header=None, header_color=BLACK):
     self.out_text.configure(state='normal')
@@ -64,4 +76,5 @@ class Main_window():
     self.out_text.see(tk.END)
 
   def close(self):
+    self.nh.disconnect()
     self.win.destroy()
