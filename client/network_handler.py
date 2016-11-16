@@ -31,21 +31,18 @@ class Fetcher(Thread):
   def run(self):
     self.nh.sprint("Starting Fetcher!")
     while self.loop:
-      print("Fetcher loop!")
       waiting = select.select([self.nh.conn],[],[],0.1)[0]
       if len(waiting) == 0:
         continue
       msg = self.nh.conn.recv(SIZE)
       if len(msg) == 0:
-        print("Fetcher disonnected!")
-        self.loop = False
+        self.stop()
 
 #      self.nh.sprint(msg.decode('utf-8'))
       self.nh.sprint(self.nh.encoder.decrypt(msg))
-    self.nh.sprint("Fetcher ending!")
-    self.nh.disconnect()
 
   def stop(self):
+    print("Fetcher disonnected!")
     self.loop = False
 
 class Network_handler:
@@ -114,7 +111,7 @@ class Network_handler:
     if self.connected:
       msg = self.encoder.encrypt(msg)
       try:
-        self.conn.send(msg) # <--- To be a bit more complex...
+        self.conn.send(msg)
       except:
         self.sprint("Error while sending message, disconnecting!")
         self.disconnect()
