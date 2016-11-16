@@ -1,0 +1,6 @@
+This project is the extension of "Chat-PA-10", a client/server chat program written in Python using Tkinter.
+I wanted to rewrite it in a cleaner way, including encryption, fully funcitonnal GUI, and more
+It is functionnal as it is but still needs major improvments, especially regarding stability, security and interface...
+
+The newer version will probably use asymetric encryption method (RSA?) at handshake, then regular encryption with a shared key. 
+Also, it will support server with password, open or with passfile (and maybe an optional client verification security to create private servers).
