@@ -54,6 +54,7 @@ class Client_thread(Thread):
     try:
       return len(select.select([self.conn],[],[],0.05)[0]) > 0
     except:
+      print("Error selecting client",self)
       self.disconnect()
 
   def receive(self):
@@ -68,10 +69,7 @@ class Client_thread(Thread):
       while not self.s2c.empty():
         action,args = self.s2c.get()
         if action == SAY_ALL:
-
-          #self.conn.send(args[0]+b':'+args[1])
-          self.conn.send(self.encoder.encrypt(args[1]+args[0]))
-
+          self.conn.send(self.encoder.encrypt(args[0]+": "+args[1]))
       if self.is_talking():
         try:
           msg = self.encoder.decrypt(self.conn.recv(SIZE))
@@ -83,13 +81,13 @@ class Client_thread(Thread):
         if msg[0] != 33:
           self.c2s.put((SAY_ALL,[msg]))
         else:
-          print("Special command from",self.nick,":",msg.decode('utf-8'))
+          print("Special command from",self.nick,":",msg.decode())
     self.finished = True
 
-  def disconnect(self,reason = "Server error"):
+  def disconnect(self,reason = "Unknown error"):
     print(self.nick+" disconnected")
     try:
-      self.conn.send(b'EXT')
+      self.conn.send(b'EXT'+reason.encode())
     except:
       pass
     self.conn.close()
