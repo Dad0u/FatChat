@@ -42,7 +42,6 @@ class Fetcher(Thread):
       self.nh.sprint(self.nh.encoder.decrypt(msg))
 
   def stop(self):
-    print("Fetcher disonnected!")
     self.loop = False
 
 class Network_handler:

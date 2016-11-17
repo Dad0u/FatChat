@@ -30,7 +30,7 @@ def auth(c):
   if msg[:4] == b'HELO':
     c.nick = parse(msg,b'USER').decode('utf-8') # To check (found it ? is it valid ?)
     salt = bytes([random.randint(0,255) for i in range(16)])
-    print("Salt",salt)
+    #print("Salt",salt)
     c.conn.send(b'SALT:'+salt)
     return salt
   else:
